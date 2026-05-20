@@ -2,6 +2,8 @@
 # Supermart Monthly Sales Forecast Model
 # ===============================
 
+from pathlib import Path
+
 import pandas as pd
 import numpy as np
 import joblib
@@ -13,7 +15,11 @@ from sklearn.metrics import mean_squared_error, r2_score
 # ===============================
 # 1️⃣ Load Dataset
 # ===============================
-df = pd.read_csv("app/super_market/supermarket(in).csv")
+# df = pd.read_csv("app/super_market/supermarket(in).csv")
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / "super_market" / "supermarket(in).csv"
+
+df = pd.read_csv(DATA_PATH)
 
 # Convert Order Date
 df["Order Date"] = pd.to_datetime(df["Order Date"], dayfirst=True)
