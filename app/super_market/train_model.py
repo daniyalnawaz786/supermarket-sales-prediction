@@ -1,7 +1,9 @@
 # ===============================
 # Supermart Monthly Sales Forecast Model
 # ===============================
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent
 from pathlib import Path
 
 import pandas as pd
@@ -15,9 +17,9 @@ from sklearn.metrics import mean_squared_error, r2_score
 # ===============================
 # 1️⃣ Load Dataset
 # ===============================
-# df = pd.read_csv("app/super_market/supermarket(in).csv")
+from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
-DATA_PATH = BASE_DIR / "super_market" / "supermarket(in).csv"
+DATA_PATH = BASE_DIR / "super_market" / "supermarket_in.csv"
 
 df = pd.read_csv(DATA_PATH)
 
