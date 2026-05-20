@@ -175,7 +175,7 @@ supermarket-sales-prediction/
 ├── app/
 │   ├── app.py                         # Main Streamlit application
 │   └── super_market/
-│       ├── supermarket(in).csv        # Dataset
+│       ├── supermarket_in.csv       # Dataset
 │       └── train_model.py             # Model training script
 └── venv/                              # Virtual environment (created during setup)
 ```

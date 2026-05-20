@@ -111,7 +111,7 @@ st.markdown("""
 # ===============================
 @st.cache_resource
 def load_data():
-    df = pd.read_csv("super_market/supermarket(in).csv")
+    df = pd.read_csv("super_market/supermarket_in.csv")
     df["Order Date"] = pd.to_datetime(df["Order Date"], dayfirst=True)
     return df
 
