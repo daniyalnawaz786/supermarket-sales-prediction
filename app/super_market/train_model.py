@@ -13,7 +13,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 # ===============================
 # 1️⃣ Load Dataset
 # ===============================
-df = pd.read_csv("super_market/supermarket(in).csv")
+df = pd.read_csv("app/super_market/supermarket(in).csv")
 
 # Convert Order Date
 df["Order Date"] = pd.to_datetime(df["Order Date"], dayfirst=True)
