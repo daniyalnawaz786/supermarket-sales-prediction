@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 
 # ===============================
-# Paths (FIXED)
+# Paths
 # ===============================
 BASE_DIR = Path(__file__).resolve().parent
 DATA_PATH = BASE_DIR / "super_market" / "supermarket_in.csv"
@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 # ===============================
-# Load Data (cached)
+# Load Data
 # ===============================
 @st.cache_data
 def load_data():
@@ -32,15 +32,12 @@ def load_data():
     df["Order Date"] = pd.to_datetime(df["Order Date"], dayfirst=True)
     return df
 
-# ===============================
-# Load Model (safe)
-# ===============================
 @st.cache_resource
 def load_model():
     try:
         return joblib.load(MODEL_PATH)
-    except:
-        return None
+    except Exception as e:
+        return str(e)
 
 df = load_data()
 model = load_model()
@@ -73,6 +70,14 @@ filtered_df = df[
 ]
 
 # ===============================
+# 🔥 SAFE EMPTY STATE (DO NOT BREAK APP)
+# ===============================
+if filtered_df.empty:
+    st.warning("⚠️ No data for selected date range")
+    st.info("👉 Adjust the date filter from sidebar")
+    st.stop()
+
+# ===============================
 # DASHBOARD
 # ===============================
 if option == "📈 Dashboard Overview":
@@ -94,19 +99,51 @@ if option == "📈 Dashboard Overview":
         st.metric("Products", filtered_df["Product Name"].nunique())
 
 # ===============================
-# SALES FORECAST
+# PRODUCT RECOMMENDATIONS (FIXED FLOW)
+# ===============================
+elif option == "🎯 Product Recommendations":
+
+    st.title("🎯 Product Recommendations")
+
+    categories = filtered_df["Category"].dropna().unique()
+
+    if len(categories) == 0:
+        st.warning("No category data available")
+    else:
+        category = st.selectbox("Select Category:", categories)
+
+        filtered_category = filtered_df[filtered_df["Category"] == category]
+
+        if filtered_category.empty:
+            st.warning("No products in this category")
+        else:
+
+            top_products = (
+                filtered_category.groupby("Product Name")["Sales"]
+                .sum()
+                .sort_values(ascending=False)
+                .head(10)
+            )
+
+            st.bar_chart(top_products)
+
+# ===============================
+# SALES FORECAST (FIXED FLOW)
 # ===============================
 elif option == "📊 Sales Forecast":
 
     st.title("📊 Sales Forecast")
 
-    if model:
+    if isinstance(model, str):
+        st.error(f"Failed to load model: {model}")
+    elif model:
 
-        df["YearMonth"] = df["Order Date"].dt.to_period("M")
-        monthly_sales = df.groupby("YearMonth")["Sales"].sum().reset_index()
+        df_local = filtered_df.copy()
+
+        df_local["YearMonth"] = df_local["Order Date"].dt.to_period("M")
+        monthly_sales = df_local.groupby("YearMonth")["Sales"].sum().reset_index()
         monthly_sales["YearMonth"] = monthly_sales["YearMonth"].dt.to_timestamp()
 
-        # chart
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=monthly_sales["YearMonth"],
@@ -115,7 +152,6 @@ elif option == "📊 Sales Forecast":
         ))
         st.plotly_chart(fig, use_container_width=True)
 
-        # prediction
         today = datetime.date.today()
         next_month = today.month + 1 if today.month < 12 else 1
         next_year = today.year if today.month < 12 else today.year + 1
@@ -127,18 +163,19 @@ elif option == "📊 Sales Forecast":
 
         prediction = model.predict(input_data)[0]
 
-        st.metric(
-            "Next Month Prediction",
-            f"${prediction:,.2f}"
-        )
+        st.metric("Next Month Prediction", f"${prediction:,.2f}")
 
     else:
-        st.warning("Model not found. Train model first.")
+        st.warning("Model not found")
 
 # ===============================
-# ANALYTICS (kept minimal fix)
+# ANALYTICS (STABLE)
 # ===============================
 elif option == "🔍 Analytics":
-    st.title("Analytics")
 
-    st.write("Advanced analytics section (unchanged logic, safe paths already fixed).")
+    st.title("🔍 Analytics")
+
+    st.write("Advanced analytics section")
+
+    st.metric("Total Sales", f"${filtered_df['Sales'].sum():,.2f}")
+    st.metric("Total Orders", len(filtered_df))

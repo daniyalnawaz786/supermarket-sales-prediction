@@ -39,7 +39,7 @@ env/
 .streamlit/secrets.toml
 
 # Models & Data
-*.pkl
+# *.pkl (Uncomment if you want to ignore other models, but we need our model for deployment)
 *.joblib
 *.h5
 *.model

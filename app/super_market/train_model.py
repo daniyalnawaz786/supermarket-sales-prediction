@@ -1,7 +1,3 @@
-# ===============================
-# Supermart Monthly Sales Forecast Model
-# ===============================
-
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -12,7 +8,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
 # ===============================
-# Paths (FIXED)
+# Paths (SAFE FIX)
 # ===============================
 BASE_DIR = Path(__file__).resolve().parent
 DATA_PATH = BASE_DIR / "super_market" / "supermarket_in.csv"
@@ -22,7 +18,6 @@ MODEL_PATH = BASE_DIR / "monthly_sales_model.pkl"
 # Load Dataset
 # ===============================
 df = pd.read_csv(DATA_PATH)
-
 df["Order Date"] = pd.to_datetime(df["Order Date"], dayfirst=True)
 
 # ===============================
@@ -64,7 +59,7 @@ print("RMSE:", rmse)
 print("R2:", r2)
 
 # ===============================
-# Save Model (FIXED)
+# Save Model (SAFE PATH)
 # ===============================
 joblib.dump(model, MODEL_PATH)
 
